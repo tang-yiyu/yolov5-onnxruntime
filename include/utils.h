@@ -18,6 +18,8 @@ namespace utils
     std::vector<std::string> loadNames(const std::string& path);
     void visualizeDetection(cv::Mat& image, std::vector<Detection>& detections,
                             const std::vector<std::string>& classNames);
+    void visualizeDetection(cv::Mat& image, Detection& detection,
+                            const std::vector<std::string>& classNames);
 
     void letterbox(const cv::Mat& image, cv::Mat& outImage,
                    const cv::Size& newShape,

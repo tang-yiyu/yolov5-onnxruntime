@@ -1,6 +1,11 @@
 #include "utils.h"
 
-
+/**
+ * @brief Calculate the product of a vector
+ * 
+ * @param vector Vector of int64_t
+ * @return size_t Product of the vector
+*/
 size_t utils::vectorProduct(const std::vector<int64_t>& vector)
 {
     if (vector.empty())
@@ -13,6 +18,12 @@ size_t utils::vectorProduct(const std::vector<int64_t>& vector)
     return product;
 }
 
+/**
+ * @brief Convert char* to wstring
+ * 
+ * @param str Char*
+ * @return std::wstring 
+*/
 std::wstring utils::charToWstring(const char* str)
 {
     typedef std::codecvt_utf8<wchar_t> convert_type;
@@ -21,6 +32,12 @@ std::wstring utils::charToWstring(const char* str)
     return converter.from_bytes(str);
 }
 
+/**
+ * @brief Load class names from file
+ * 
+ * @param path Path to class names file
+ * @return std::vector<std::string> Vector of class names
+*/
 std::vector<std::string> utils::loadNames(const std::string& path)
 {
     // load class names
@@ -45,13 +62,19 @@ std::vector<std::string> utils::loadNames(const std::string& path)
     return classNames;
 }
 
-
+/**
+ * @brief Visualize detection result
+ * 
+ * @param image Image to draw on
+ * @param detections Vector of detections
+ * @param classNames Vector of class names
+*/
 void utils::visualizeDetection(cv::Mat& image, std::vector<Detection>& detections,
                                const std::vector<std::string>& classNames)
 {
     for (const Detection& detection : detections)
     {
-        cv::rectangle(image, detection.box, cv::Scalar(229, 160, 21), 2);
+        cv::rectangle(image, detection.box, cv::Scalar(229, 160, 21), 2); // draw bounding box
 
         int x = detection.box.x;
         int y = detection.box.y;
@@ -60,8 +83,9 @@ void utils::visualizeDetection(cv::Mat& image, std::vector<Detection>& detection
         int classId = detection.classId;
         std::string label = classNames[classId] + " 0." + std::to_string(conf);
 
+        // draw label
         int baseline = 0;
-        cv::Size size = cv::getTextSize(label, cv::FONT_ITALIC, 0.8, 2, &baseline);
+        cv::Size size = cv::getTextSize(label, cv::FONT_ITALIC, 0.8, 2, &baseline); // get text size
         cv::rectangle(image,
                       cv::Point(x, y - 25), cv::Point(x + size.width, y),
                       cv::Scalar(229, 160, 21), -1);
@@ -72,6 +96,48 @@ void utils::visualizeDetection(cv::Mat& image, std::vector<Detection>& detection
     }
 }
 
+/**
+ * @brief Visualize detection result
+ * 
+ * @param image Image to draw on
+ * @param detection Detection
+ * @param classNames Vector of class names
+*/
+void utils::visualizeDetection(cv::Mat& image, Detection& detection,
+                            const std::vector<std::string>& classNames)
+{
+    cv::rectangle(image, detection.box, cv::Scalar(229, 160, 21), 2); // draw bounding box
+
+    int x = detection.box.x;
+    int y = detection.box.y;
+
+    int conf = (int)std::round(detection.conf * 100);
+    int classId = detection.classId;
+    std::string label = classNames[classId] + " 0." + std::to_string(conf);
+
+    // draw label
+    int baseline = 0;
+    cv::Size size = cv::getTextSize(label, cv::FONT_ITALIC, 0.8, 2, &baseline); // get text size
+    cv::rectangle(image,
+                    cv::Point(x, y - 25), cv::Point(x + size.width, y),
+                    cv::Scalar(229, 160, 21), -1);
+
+    cv::putText(image, label,
+                cv::Point(x, y - 3), cv::FONT_ITALIC,
+                0.8, cv::Scalar(255, 255, 255), 2);
+}
+
+/**
+ * @brief Resize and pad image while meeting stride-multiple constraints
+ * @param image Input image
+ * @param outImage Output image
+ * @param newShape New shape of output image
+ * @param color Color of padding
+ * @param auto_ Whether to automatically choose stride
+ * @param scaleFill Whether to stretch image to new shape
+ * @param scaleUp Whether to scale up image
+ * @param stride Stride
+*/
 void utils::letterbox(const cv::Mat& image, cv::Mat& outImage,
                       const cv::Size& newShape = cv::Size(640, 640),
                       const cv::Scalar& color = cv::Scalar(114, 114, 114),
@@ -90,16 +156,19 @@ void utils::letterbox(const cv::Mat& image, cv::Mat& outImage,
     int newUnpad[2] {(int)std::round((float)shape.width * r),
                      (int)std::round((float)shape.height * r)};
 
+    // Compute padding
     auto dw = (float)(newShape.width - newUnpad[0]);
     auto dh = (float)(newShape.height - newUnpad[1]);
 
     if (auto_)
     {
+        // Check if stride is multiple of padding, satisfy stride-multiple constraints
         dw = (float)((int)dw % stride);
         dh = (float)((int)dh % stride);
     }
     else if (scaleFill)
     {
+        // Sterch image to new shape
         dw = 0.0f;
         dh = 0.0f;
         newUnpad[0] = newShape.width;
@@ -113,16 +182,23 @@ void utils::letterbox(const cv::Mat& image, cv::Mat& outImage,
 
     if (shape.width != newUnpad[0] && shape.height != newUnpad[1])
     {
-        cv::resize(image, outImage, cv::Size(newUnpad[0], newUnpad[1]));
+        cv::resize(image, outImage, cv::Size(newUnpad[0], newUnpad[1])); // Resize
     }
 
     int top = int(std::round(dh - 0.1f));
     int bottom = int(std::round(dh + 0.1f));
     int left = int(std::round(dw - 0.1f));
     int right = int(std::round(dw + 0.1f));
-    cv::copyMakeBorder(outImage, outImage, top, bottom, left, right, cv::BORDER_CONSTANT, color);
+    cv::copyMakeBorder(outImage, outImage, top, bottom, left, right, cv::BORDER_CONSTANT, color); // Pad
 }
 
+/**
+ * @brief transform coordinates from resized image to original image
+ * 
+ * @param imageShape Shape of resized image
+ * @param coords coordinates to transform
+ * @param imageOriginalShape Shape of original image
+ */
 void utils::scaleCoords(const cv::Size& imageShape, cv::Rect& coords, const cv::Size& imageOriginalShape)
 {
     float gain = std::min((float)imageShape.height / (float)imageOriginalShape.height,

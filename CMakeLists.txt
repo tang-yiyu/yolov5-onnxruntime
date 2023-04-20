@@ -1,12 +1,18 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(yolo_ort)
 
-option(ONNXRUNTIME_DIR "Path to built ONNX Runtime directory." STRING)
+set(ONNXRUNTIME_DIR "D:/lib/onnxruntime")
 message(STATUS "ONNXRUNTIME_DIR: ${ONNXRUNTIME_DIR}")
 
-find_package(OpenCV REQUIRED)
+find_package(OpenCV REQUIRED PATHS "D:/lib/opencv/build" NO_DEFAULT_PATH)
+# find_package(OpenCV REQUIRED)
 
-include_directories("include/")
+
+include_directories(
+    "include/"
+    ${OpenCV_INCLUDE_DIRS}
+    # ${ONNXRUNTIME_DIR}/include
+)
 
 add_executable(yolo_ort
                src/main.cpp
