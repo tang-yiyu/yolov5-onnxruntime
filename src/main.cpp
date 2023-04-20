@@ -11,9 +11,9 @@ int main(int argc, char* argv[])
     const float iouThreshold = 0.4f;
 
     cmdline::parser cmd;
-    cmd.add<std::string>("model_path", 'm', "Path to onnx model.", true, "../cardetect.onnx");
+    cmd.add<std::string>("model_path", 'm', "Path to onnx model.", true, "../models/cardetect.onnx");
     // cmd.add<std::string>("image", 'i', "Image source to be detected.", true, "../images/car4.png");
-    cmd.add<std::string>("class_names", 'c', "Path to class names file.", true, "../carclasses.txt");
+    cmd.add<std::string>("class_names", 'c', "Path to class names file.", true, "../models/carclasses.txt");
     cmd.add("gpu", '\0', "Inference on cuda device.");
 
     cmd.parse_check(argc, argv);
