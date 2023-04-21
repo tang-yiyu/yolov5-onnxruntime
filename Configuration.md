@@ -10,15 +10,17 @@
 	* OS: Tested on Windows 10 and Ubuntu 20.04
 	* CUDA 11+ [Optional]
 2. CUDA、cuDNN与ONNX版本需匹配。[版本匹配查询](https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements)
-![OnnxruntimeVersion](version.png)
+<p align="center">
+  <a href="version.png"><img src="version.png" style="width:60%; height:60%;"/></a>
+</p>
 
 > 本项目使用的ONNXRuntime版本为1.12，对应的CUDA版本为11.4,cuDNN版本为8.2.2.26。ONNXRuntime版本过高或过低都会导致不兼容（不存在某某函数）。
 
-3. 需要用**64位**编译器编译。
-4. 需要在**Release模式**下运行。
-5. 需要将64位的zlibwapi.dll文件放到CUDA的bin目录下。
-6. 需要将onnxruntime.dll、onnxruntime_providers_cuda.dll、onnxruntime_providers_shared.dll和onnxruntime_providers_tensorrt.dll放到生成的.exe文件同级目录下。
-7. cmake命令
+1. 需要用**64位**编译器编译。
+2. 需要在**Release模式**下运行。
+3. 需要将64位的zlibwapi.dll文件放到CUDA的bin目录下。
+4. 需要将onnxruntime.dll、onnxruntime_providers_cuda.dll、onnxruntime_providers_shared.dll和onnxruntime_providers_tensorrt.dll放到生成的.exe文件同级目录下。
+5. cmake命令
 
 ```cmake
 # old version
