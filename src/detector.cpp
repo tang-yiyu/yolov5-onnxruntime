@@ -11,25 +11,23 @@ YOLODetector::YOLODetector(const std::string& modelPath,
                            const bool& isGPU = true,
                            const cv::Size& inputSize = cv::Size(640, 640))
 {
-    env = Ort::Env(OrtLoggingLevel::ORT_LOGGING_LEVEL_WARNING, "ONNX_DETECTION");
+    env = Ort::Env(OrtLoggingLevel::ORT_LOGGING_LEVEL_WARNING, "CAR_DETECTION");
     sessionOptions = Ort::SessionOptions();
 
     std::vector<std::string> availableProviders = Ort::GetAvailableProviders();
-    auto cudaAvailable = std::find(availableProviders.begin(), availableProviders.end(), "CUDAExecutionProvider"); // find the CUDAExecutionProvider
+    auto cudaAvailable = std::find(availableProviders.begin(), 
+                                   availableProviders.end(), 
+                                   "CUDAExecutionProvider"); // find the CUDAExecutionProvider
     OrtCUDAProviderOptions cudaOption;
 
-    if (isGPU && (cudaAvailable == availableProviders.end()))
-    {
-        std::cout << "GPU is not supported by your ONNXRuntime build. Fallback to CPU." << std::endl;
+    if (isGPU && (cudaAvailable == availableProviders.end())){
         std::cout << "Inference device: CPU" << std::endl;
     }
-    else if (isGPU && (cudaAvailable != availableProviders.end()))
-    {
+    else if (isGPU && (cudaAvailable != availableProviders.end())){
         std::cout << "Inference device: GPU" << std::endl;
         sessionOptions.AppendExecutionProvider_CUDA(cudaOption);
     }
-    else
-    {
+    else{
         std::cout << "Inference device: CPU" << std::endl;
     }
 

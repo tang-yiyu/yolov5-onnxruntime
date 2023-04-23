@@ -199,19 +199,21 @@ void utils::letterbox(const cv::Mat& image, cv::Mat& outImage,
  * @param coords coordinates to transform
  * @param imageOriginalShape Shape of original image
  */
-void utils::scaleCoords(const cv::Size& imageShape, cv::Rect& coords, const cv::Size& imageOriginalShape)
+void utils::scaleCoords(const cv::Size& imageShape,
+                        cv::Rect& coords,
+                        const cv::Size& imageOriginalShape)
 {
-    float gain = std::min((float)imageShape.height / (float)imageOriginalShape.height,
+    float ratio = std::min((float)imageShape.height / (float)imageOriginalShape.height,
                           (float)imageShape.width / (float)imageOriginalShape.width);
 
-    int pad[2] = {(int) (( (float)imageShape.width - (float)imageOriginalShape.width * gain) / 2.0f),
-                  (int) (( (float)imageShape.height - (float)imageOriginalShape.height * gain) / 2.0f)};
+    int pad[2] = {(int) (( (float)imageShape.width - (float)imageOriginalShape.width * ratio) / 2.0f),
+                  (int) (( (float)imageShape.height - (float)imageOriginalShape.height * ratio) / 2.0f)};
 
-    coords.x = (int) std::round(((float)(coords.x - pad[0]) / gain));
-    coords.y = (int) std::round(((float)(coords.y - pad[1]) / gain));
+    coords.x = (int) std::round(((float)(coords.x - pad[0]) / ratio));
+    coords.y = (int) std::round(((float)(coords.y - pad[1]) / ratio));
 
-    coords.width = (int) std::round(((float)coords.width / gain));
-    coords.height = (int) std::round(((float)coords.height / gain));
+    coords.width = (int) std::round(((float)coords.width / ratio));
+    coords.height = (int) std::round(((float)coords.height / ratio));
 
     // // clip coords, should be modified for width and height
     // coords.x = utils::clip(coords.x, 0, imageOriginalShape.width);
@@ -220,8 +222,28 @@ void utils::scaleCoords(const cv::Size& imageShape, cv::Rect& coords, const cv::
     // coords.height = utils::clip(coords.height, 0, imageOriginalShape.height);
 }
 
+// void utils::scaleCoords(const cv::Size& imgShape,
+//                         cv::Rect& coords,
+//                         const cv::Size& oriImgShape)
+// {
+//     float ratio = std::min((float)imgShape.height / (float)oriImgShape.height,
+//                            (float)imgShape.width / (float)oriImgShape.width);
+
+//     int pad[2] = {(int) (((float)imgShape.width - 
+//                           (float)oriImgShape.width * ratio) / 2.0f),
+//                   (int) (((float)imgShape.height - 
+//                           (float)oriImgShape.height * ratio) / 2.0f)};
+
+//     coords.x = (int) std::round(((float)(coords.x - pad[0]) / ratio));
+//     coords.y = (int) std::round(((float)(coords.y - pad[1]) / ratio));
+
+//     coords.width = (int) std::round(((float)coords.width / ratio));
+//     coords.height = (int) std::round(((float)coords.height / ratio));
+// }
+
 template <typename T>
 T utils::clip(const T& n, const T& lower, const T& upper)
 {
     return std::max(lower, std::min(n, upper));
 }
+              
